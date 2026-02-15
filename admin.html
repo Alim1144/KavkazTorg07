@@ -310,6 +310,9 @@
         <div class="admin-header">
             <h1>Админ-панель</h1>
             <p>Управление товарами КавказТорг 07</p>
+            <p style="font-size: 0.9rem; margin-top: 0.5rem; opacity: 0.8;" id="storageStatus">
+                <span id="storageIndicator">●</span> Данные сохраняются в браузере
+            </p>
         </div>
 
         <div class="success-message" id="successMessage">
@@ -591,29 +594,50 @@
             };
 
             let success = false;
-            if (isEditMode && editingProductId.value) {
-                // Режим редактирования
-                success = productManager.updateProduct(editingCategory.value, parseInt(editingProductId.value), product);
-                if (success) {
-                    showSuccess('Товар успешно обновлен!');
-                    exitEditMode();
+            let result = null;
+            
+            try {
+                if (isEditMode && editingProductId.value) {
+                    // Режим редактирования
+                    success = productManager.updateProduct(editingCategory.value, parseInt(editingProductId.value), product);
+                    if (success) {
+                        showSuccess('Товар успешно обновлен!');
+                        exitEditMode();
+                    } else {
+                        showError('Ошибка при обновлении товара. Проверьте консоль браузера (F12) для деталей.');
+                        console.error('Ошибка обновления товара:', { category: editingCategory.value, id: editingProductId.value, product });
+                    }
+                } else {
+                    // Режим добавления
+                    result = productManager.addProduct(category, product);
+                    if (result) {
+                        showSuccess('Товар успешно добавлен!');
+                        resetForm();
+                        success = true;
+                    } else {
+                        showError('Ошибка при добавлении товара. Возможно, недостаточно места в хранилище браузера.');
+                        console.error('Ошибка добавления товара:', { category, product });
+                    }
                 }
-            } else {
-                // Режим добавления
-                success = productManager.addProduct(category, product);
-                if (success) {
-                    showSuccess('Товар успешно добавлен!');
-                    resetForm();
-                }
-            }
 
-            if (success) {
-                loadProducts();
-                
-                // Обновляем главную страницу, если она открыта
-                if (window.opener && !window.opener.closed) {
-                    window.opener.location.reload();
+                if (success || result) {
+                    // Проверяем, что данные действительно сохранились
+                    const savedProducts = productManager.getProducts();
+                    if (savedProducts) {
+                        loadProducts();
+                        
+                        // Обновляем главную страницу, если она открыта
+                        if (window.opener && !window.opener.closed) {
+                            window.opener.location.reload();
+                        }
+                    } else {
+                        showError('Данные не сохранились. Проверьте консоль браузера (F12).');
+                        console.error('Данные не найдены после сохранения');
+                    }
                 }
+            } catch (error) {
+                showError('Произошла ошибка: ' + error.message);
+                console.error('Ошибка при сохранении:', error);
             }
         });
 
@@ -767,14 +791,49 @@
             }
         }
 
+        // Проверка состояния localStorage
+        function checkStorageStatus() {
+            const storageIndicator = document.getElementById('storageIndicator');
+            const storageStatus = document.getElementById('storageStatus');
+            
+            try {
+                const test = '__storage_test__';
+                localStorage.setItem(test, test);
+                localStorage.removeItem(test);
+                
+                const products = productManager.getProducts();
+                if (products) {
+                    storageIndicator.style.color = '#28a745';
+                    storageStatus.innerHTML = '<span id="storageIndicator" style="color: #28a745;">●</span> Данные сохранены и загружены';
+                } else {
+                    storageIndicator.style.color = '#ffc107';
+                    storageStatus.innerHTML = '<span id="storageIndicator" style="color: #ffc107;">●</span> localStorage доступен, но данных нет';
+                }
+            } catch (e) {
+                storageIndicator.style.color = '#dc3545';
+                storageStatus.innerHTML = '<span id="storageIndicator" style="color: #dc3545;">●</span> Ошибка: localStorage недоступен';
+            }
+        }
+
         // Загружаем товары при загрузке страницы
         document.addEventListener('DOMContentLoaded', () => {
+            checkStorageStatus();
             loadProducts();
+            
+            // Проверяем статус каждые 2 секунды
+            setInterval(checkStorageStatus, 2000);
         });
 
         // Слушаем обновления
         window.addEventListener('productsUpdated', () => {
             loadProducts();
+        });
+
+        // Слушаем события storage для синхронизации между вкладками
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'kavkaztorg_products') {
+                loadProducts();
+            }
         });
     </script>
 </body>

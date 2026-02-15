@@ -149,6 +149,13 @@ window.addEventListener('productsUpdated', () => {
     loadProducts();
 });
 
+// Также слушаем события storage для синхронизации между вкладками
+window.addEventListener('storage', (e) => {
+    if (e.key === 'kavkaztorg_products') {
+        loadProducts();
+    }
+});
+
 // Observe all cards and sections with staggered animation
 document.addEventListener('DOMContentLoaded', () => {
     // Загружаем товары
