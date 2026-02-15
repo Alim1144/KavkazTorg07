@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Админ-панель - КавказТорг 07</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem 20px;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white;
+            padding: 2rem;
+            border-radius: 15px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .admin-header h1 {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        .admin-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+        }
+
+        .admin-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .admin-section h2 {
+            color: var(--primary-green);
+            margin-bottom: 1.5rem;
+            font-size: 1.8rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .btn-admin {
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, var(--primary-green), var(--light-green));
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            width: 100%;
+        }
+
+        .btn-admin:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(45, 80, 22, 0.3);
+        }
+
+        .btn-admin-secondary {
+            background: linear-gradient(135deg, #666, #888);
+        }
+
+        .btn-admin-danger {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+        }
+
+        .products-list {
+            display: grid;
+            gap: 1rem;
+        }
+
+        .product-item-admin {
+            background: var(--bg-light);
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .product-item-admin-info {
+            flex: 1;
+        }
+
+        .product-item-admin-info h3 {
+            margin: 0 0 0.5rem;
+            color: var(--primary-green);
+        }
+
+        .product-item-admin-info p {
+            margin: 0.25rem 0;
+            color: var(--text-light);
+            font-size: 0.9rem;
+        }
+
+        .product-item-admin-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .btn-small {
+            padding: 0.5rem 1rem;
+            font-size: 0.9rem;
+        }
+
+        .image-preview {
+            max-width: 150px;
+            max-height: 150px;
+            margin-top: 0.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        .image-preview.show {
+            display: block;
+        }
+
+        .success-message {
+            background: #d4edda;
+            color: #155724;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .success-message.show {
+            display: block;
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--primary-green);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .back-link:hover {
+            color: var(--light-green);
+        }
+    </style>
+    <script src="data.js"></script>
+</head>
+<body>
+    <div class="admin-container">
+        <a href="index.html" class="back-link">← Вернуться на сайт</a>
+        
+        <div class="admin-header">
+            <h1>Админ-панель</h1>
+            <p>Управление товарами КавказТорг 07</p>
+        </div>
+
+        <div class="success-message" id="successMessage">
+            Товар успешно добавлен!
+        </div>
+
+        <div class="admin-section">
+            <h2>Добавить товар</h2>
+            <form id="productForm">
+                <div class="form-group">
+                    <label for="productCategory">Категория *</label>
+                    <select id="productCategory" required>
+                        <option value="">Выберите категорию</option>
+                        <option value="pallets">Деревянные поддоны</option>
+                        <option value="drinks">Газированные напитки</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="productName">Название товара *</label>
+                    <input type="text" id="productName" required placeholder="Например: Европаллет">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="productSize">Размер/Объем</label>
+                        <input type="text" id="productSize" placeholder="Например: 1200×800 мм или 0.5 л">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="productPrice">Цена (₽) *</label>
+                        <input type="number" id="productPrice" required min="0" step="0.01" placeholder="500">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="productPriceNote">Примечание к цене</label>
+                    <input type="text" id="productPriceNote" placeholder="Например: с учетом НДС">
+                </div>
+
+                <div class="form-group">
+                    <label for="productDescription">Описание</label>
+                    <textarea id="productDescription" placeholder="Описание товара"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="productBadge">Бейдж</label>
+                    <select id="productBadge">
+                        <option value="">Нет</option>
+                        <option value="Популярное">Популярное</option>
+                        <option value="Новинка">Новинка</option>
+                        <option value="Акция">Акция</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="productIcon">Иконка (эмодзи)</label>
+                    <input type="text" id="productIcon" placeholder="📦 или 🥤" maxlength="2">
+                </div>
+
+                <div class="form-group">
+                    <label for="productImage">URL изображения</label>
+                    <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
+                    <img id="imagePreview" class="image-preview" alt="Превью">
+                </div>
+
+                <button type="submit" class="btn-admin">Добавить товар</button>
+            </form>
+        </div>
+
+        <div class="admin-section">
+            <h2>Деревянные поддоны</h2>
+            <div class="products-list" id="palletsList"></div>
+        </div>
+
+        <div class="admin-section">
+            <h2>Газированные напитки</h2>
+            <div class="products-list" id="drinksList"></div>
+        </div>
+    </div>
+
+    <script>
+        const productForm = document.getElementById('productForm');
+        const successMessage = document.getElementById('successMessage');
+        const imagePreview = document.getElementById('imagePreview');
+        const productImageInput = document.getElementById('productImage');
+
+        // Превью изображения
+        productImageInput.addEventListener('input', function() {
+            if (this.value) {
+                imagePreview.src = this.value;
+                imagePreview.classList.add('show');
+            } else {
+                imagePreview.classList.remove('show');
+            }
+        });
+
+        // Обработка формы
+        productForm.addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            const product = {
+                name: document.getElementById('productName').value,
+                size: document.getElementById('productSize').value,
+                price: parseFloat(document.getElementById('productPrice').value),
+                priceNote: document.getElementById('productPriceNote').value,
+                description: document.getElementById('productDescription').value,
+                badge: document.getElementById('productBadge').value,
+                icon: document.getElementById('productIcon').value || '📦',
+                image: document.getElementById('productImage').value
+            };
+
+            const category = document.getElementById('productCategory').value;
+
+            if (productManager.addProduct(category, product)) {
+                showSuccess();
+                productForm.reset();
+                imagePreview.classList.remove('show');
+                loadProducts();
+            }
+        });
+
+        function showSuccess() {
+            successMessage.classList.add('show');
+            setTimeout(() => {
+                successMessage.classList.remove('show');
+            }, 3000);
+        }
+
+        function loadProducts() {
+            const products = productManager.getProducts();
+            
+            // Загружаем поддоны
+            const palletsList = document.getElementById('palletsList');
+            palletsList.innerHTML = '';
+            if (products.pallets && products.pallets.length > 0) {
+                products.pallets.forEach(product => {
+                    palletsList.appendChild(createProductItem(product, 'pallets'));
+                });
+            } else {
+                palletsList.innerHTML = '<p style="color: var(--text-light);">Товаров нет</p>';
+            }
+
+            // Загружаем напитки
+            const drinksList = document.getElementById('drinksList');
+            drinksList.innerHTML = '';
+            if (products.drinks && products.drinks.length > 0) {
+                products.drinks.forEach(product => {
+                    drinksList.appendChild(createProductItem(product, 'drinks'));
+                });
+            } else {
+                drinksList.innerHTML = '<p style="color: var(--text-light);">Товаров нет</p>';
+            }
+        }
+
+        function createProductItem(product, category) {
+            const item = document.createElement('div');
+            item.className = 'product-item-admin';
+            
+            item.innerHTML = `
+                <div class="product-item-admin-info">
+                    <h3>${product.name}</h3>
+                    ${product.size ? `<p><strong>Размер:</strong> ${product.size}</p>` : ''}
+                    <p><strong>Цена:</strong> ${product.price} ₽ ${product.priceNote ? `(${product.priceNote})` : ''}</p>
+                    ${product.description ? `<p>${product.description}</p>` : ''}
+                </div>
+                <div class="product-item-admin-actions">
+                    <button class="btn-admin btn-admin-danger btn-small" onclick="deleteProduct('${category}', ${product.id})">Удалить</button>
+                </div>
+            `;
+
+            return item;
+        }
+
+        function deleteProduct(category, productId) {
+            if (confirm('Вы уверены, что хотите удалить этот товар?')) {
+                if (productManager.deleteProduct(category, productId)) {
+                    loadProducts();
+                    // Обновляем главную страницу, если она открыта
+                    if (window.opener) {
+                        window.opener.location.reload();
+                    }
+                }
+            }
+        }
+
+        // Загружаем товары при загрузке страницы
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProducts();
+        });
+
+        // Слушаем обновления
+        window.addEventListener('productsUpdated', () => {
+            loadProducts();
+        });
+    </script>
+</body>
+</html>

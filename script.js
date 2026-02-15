@@ -65,9 +65,92 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+// Загрузка и отображение товаров
+function loadProducts() {
+    const productsGrid = document.getElementById('productsGrid');
+    if (!productsGrid) return;
+
+    const products = productManager.getProducts();
+    if (!products) return;
+
+    productsGrid.innerHTML = '';
+
+    // Загружаем поддоны
+    if (products.pallets && products.pallets.length > 0) {
+        products.pallets.forEach(product => {
+            const productCard = createProductCard(product, 'pallets');
+            productsGrid.appendChild(productCard);
+        });
+    }
+
+    // Загружаем напитки
+    if (products.drinks && products.drinks.length > 0) {
+        products.drinks.forEach(product => {
+            const productCard = createProductCard(product, 'drinks');
+            productsGrid.appendChild(productCard);
+        });
+    }
+
+    // Анимация появления
+    const productCards = productsGrid.querySelectorAll('.product-item');
+    productCards.forEach((el, index) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(30px)';
+        el.style.transition = `opacity 0.8s ease ${index * 0.1}s, transform 0.8s ease ${index * 0.1}s`;
+        setTimeout(() => {
+            el.style.opacity = '1';
+            el.style.transform = 'translateY(0)';
+        }, 100);
+    });
+}
+
+function createProductCard(product, category) {
+    const card = document.createElement('div');
+    card.className = `product-item ${category === 'pallets' ? 'product-category-1' : 'product-category-2'}`;
+    
+    let imageHtml = '';
+    let iconHtml = '';
+    if (product.image) {
+        imageHtml = `<img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.style.display='none';">`;
+    } else {
+        iconHtml = `<div class="product-icon">${product.icon || '📦'}</div>`;
+    }
+
+    const sizeHtml = product.size ? `
+        <div class="product-spec">
+            <span class="spec-label">${category === 'pallets' ? 'Размер:' : 'Объем:'}</span>
+            <span class="spec-value">${product.size}</span>
+        </div>
+    ` : '';
+
+    card.innerHTML = `
+        ${imageHtml}
+        ${iconHtml}
+        ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
+        <h3 class="product-title">${product.name}</h3>
+        ${product.description ? `<p class="product-description">${product.description}</p>` : ''}
+        ${sizeHtml ? `<div class="product-specs">${sizeHtml}</div>` : ''}
+        <div class="product-price">
+            <span class="price-value">${product.price} ₽</span>
+            ${product.priceNote ? `<span class="price-note">${product.priceNote}</span>` : ''}
+        </div>
+        <div class="product-decoration"></div>
+    `;
+
+    return card;
+}
+
+// Слушаем обновления товаров
+window.addEventListener('productsUpdated', () => {
+    loadProducts();
+});
+
 // Observe all cards and sections with staggered animation
 document.addEventListener('DOMContentLoaded', () => {
-    const animatedElements = document.querySelectorAll('.feature-card, .contact-card, .product-category, .stat-item');
+    // Загружаем товары
+    loadProducts();
+
+    const animatedElements = document.querySelectorAll('.feature-card, .contact-card, .product-category, .product-item, .stat-item');
     animatedElements.forEach((el, index) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(30px)';

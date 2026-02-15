@@ -9,6 +9,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="data.js"></script>
 </head>
 <body>
     <!-- Header -->
@@ -39,6 +40,58 @@
 
     <!-- Hero Section -->
     <section class="hero">
+        <!-- Интерактивный фон с горами Кавказа -->
+        <svg class="hero-mountains" viewBox="0 0 1920 1080" preserveAspectRatio="xMidYMax slice" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="mountainGradient1" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#5a7c3a;stop-opacity:0.8" />
+                    <stop offset="50%" style="stop-color:#4a6c2a;stop-opacity:0.6" />
+                    <stop offset="100%" style="stop-color:#3a5c1a;stop-opacity:0.4" />
+                </linearGradient>
+                <linearGradient id="mountainGradient2" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#6a8c4a;stop-opacity:0.7" />
+                    <stop offset="50%" style="stop-color:#5a7c3a;stop-opacity:0.5" />
+                    <stop offset="100%" style="stop-color:#4a6c2a;stop-opacity:0.3" />
+                </linearGradient>
+                <linearGradient id="mountainGradient3" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#7a9c5a;stop-opacity:0.6" />
+                    <stop offset="50%" style="stop-color:#6a8c4a;stop-opacity:0.4" />
+                    <stop offset="100%" style="stop-color:#5a7c3a;stop-opacity:0.2" />
+                </linearGradient>
+                <linearGradient id="skyGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" style="stop-color:#87CEEB;stop-opacity:0.3" />
+                    <stop offset="50%" style="stop-color:#B0E0E6;stop-opacity:0.2" />
+                    <stop offset="100%" style="stop-color:#E0F6FF;stop-opacity:0.1" />
+                </linearGradient>
+            </defs>
+            <!-- Небо -->
+            <rect width="100%" height="100%" fill="url(#skyGradient)"/>
+            <!-- Горы на заднем плане -->
+            <path class="mountain mountain-back" d="M 0,800 L 300,500 L 600,650 L 900,400 L 1200,550 L 1500,350 L 1800,500 L 1920,450 L 1920,1080 L 0,1080 Z" fill="url(#mountainGradient3)">
+                <animate attributeName="d" dur="30s" repeatCount="indefinite" 
+                    values="M 0,800 L 300,500 L 600,650 L 900,400 L 1200,550 L 1500,350 L 1800,500 L 1920,450 L 1920,1080 L 0,1080 Z;
+                            M 0,820 L 300,520 L 600,670 L 900,420 L 1200,570 L 1500,370 L 1800,520 L 1920,470 L 1920,1080 L 0,1080 Z;
+                            M 0,800 L 300,500 L 600,650 L 900,400 L 1200,550 L 1500,350 L 1800,500 L 1920,450 L 1920,1080 L 0,1080 Z"/>
+            </path>
+            <!-- Горы на среднем плане -->
+            <path class="mountain mountain-mid" d="M 0,900 L 400,600 L 800,750 L 1200,500 L 1600,700 L 1920,600 L 1920,1080 L 0,1080 Z" fill="url(#mountainGradient2)">
+                <animate attributeName="d" dur="25s" repeatCount="indefinite" 
+                    values="M 0,900 L 400,600 L 800,750 L 1200,500 L 1600,700 L 1920,600 L 1920,1080 L 0,1080 Z;
+                            M 0,920 L 400,620 L 800,770 L 1200,520 L 1600,720 L 1920,620 L 1920,1080 L 0,1080 Z;
+                            M 0,900 L 400,600 L 800,750 L 1200,500 L 1600,700 L 1920,600 L 1920,1080 L 0,1080 Z"/>
+            </path>
+            <!-- Горы на переднем плане -->
+            <path class="mountain mountain-front" d="M 0,1000 L 500,700 L 1000,850 L 1500,650 L 1920,750 L 1920,1080 L 0,1080 Z" fill="url(#mountainGradient1)">
+                <animate attributeName="d" dur="20s" repeatCount="indefinite" 
+                    values="M 0,1000 L 500,700 L 1000,850 L 1500,650 L 1920,750 L 1920,1080 L 0,1080 Z;
+                            M 0,1020 L 500,720 L 1000,870 L 1500,670 L 1920,770 L 1920,1080 L 0,1080 Z;
+                            M 0,1000 L 500,700 L 1000,850 L 1500,650 L 1920,750 L 1920,1080 L 0,1080 Z"/>
+            </path>
+            <!-- Снежные вершины -->
+            <path class="snow-peak" d="M 800,400 L 850,350 L 900,400 Z" fill="rgba(255,255,255,0.4)"/>
+            <path class="snow-peak" d="M 1200,500 L 1250,450 L 1300,500 Z" fill="rgba(255,255,255,0.3)"/>
+            <path class="snow-peak" d="M 1500,350 L 1550,300 L 1600,350 Z" fill="rgba(255,255,255,0.5)"/>
+        </svg>
         <div class="hero-decoration hero-decoration-1"></div>
         <div class="hero-decoration hero-decoration-2"></div>
         <div class="hero-decoration hero-decoration-3"></div>
@@ -52,7 +105,7 @@
                     <div class="hero-logo-underline"></div>
                 </div>
                 <div class="hero-badge">Качество с 2007 года</div>
-                <p class="hero-subtitle">Производство деревянных поддонов и газированных напитков</p>
+                <p class="hero-subtitle">Производство деревянных поддонов и продажа газированных напитков</p>
                 <div class="hero-buttons">
                     <a href="#products" class="btn btn-primary">Наша продукция</a>
                     <a href="#contacts" class="btn btn-secondary">Связаться с нами</a>
@@ -135,21 +188,7 @@
         <div class="container">
             <h2 class="section-title">Наша продукция</h2>
             <div class="products-grid" id="productsGrid">
-                <!-- Каталог будет загружен позже -->
-                <div class="product-category product-category-1">
-                    <div class="product-icon">📦</div>
-                    <div class="product-badge">Новинка</div>
-                    <h3 class="category-title">Деревянные поддоны</h3>
-                    <p class="category-description">Каталог поддонов будет добавлен в ближайшее время</p>
-                    <div class="product-decoration"></div>
-                </div>
-                <div class="product-category product-category-2">
-                    <div class="product-icon">🥤</div>
-                    <div class="product-badge">Популярное</div>
-                    <h3 class="category-title">Газированные напитки</h3>
-                    <p class="category-description">Каталог напитков будет добавлен в ближайшее время</p>
-                    <div class="product-decoration"></div>
-                </div>
+                <!-- Товары загружаются динамически -->
             </div>
         </div>
     </section>
@@ -202,6 +241,7 @@
         <div class="container">
             <div class="footer-content">
                 <p class="footer-text">&copy; 2024 КавказТорг 07. Все права защищены.</p>
+                <a href="admin.html" style="color: rgba(255,255,255,0.5); font-size: 0.8rem; text-decoration: none; margin-top: 0.5rem; display: block;">Админ-панель</a>
             </div>
         </div>
     </footer>
