@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="КавказТорг 07 - производство деревянных поддонов и газированных напитков">
+    <title>КавказТорг 07 - Деревянные поддоны и газированные напитки</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo" onclick="event.preventDefault(); window.scrollTo({top: 0, behavior: 'smooth'});">
+                    <h1 class="logo-text">КавказТорг <span class="logo-number">07</span></h1>
+                </a>
+                <nav class="nav">
+                    <a href="#about" class="nav-link">О компании</a>
+                    <a href="#products" class="nav-link">Продукция</a>
+                    <a href="#contacts" class="nav-link">Контакты</a>
+                </nav>
+                <div class="mobile-menu-toggle" id="mobileMenuToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </div>
+            </div>
+        </div>
+        <nav class="mobile-nav" id="mobileNav">
+            <a href="#about" class="mobile-nav-link">О компании</a>
+            <a href="#products" class="mobile-nav-link">Продукция</a>
+            <a href="#contacts" class="mobile-nav-link">Контакты</a>
+        </nav>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-decoration hero-decoration-1"></div>
+        <div class="hero-decoration hero-decoration-2"></div>
+        <div class="hero-decoration hero-decoration-3"></div>
+        <div class="container">
+            <div class="hero-content">
+                <div class="hero-logo-text-wrapper">
+                    <h1 class="hero-logo-text">
+                        <span class="hero-logo-main">КавказТорг</span>
+                        <span class="hero-logo-number">07</span>
+                    </h1>
+                    <div class="hero-logo-underline"></div>
+                </div>
+                <div class="hero-badge">Качество с 2007 года</div>
+                <p class="hero-subtitle">Производство деревянных поддонов и газированных напитков</p>
+                <div class="hero-buttons">
+                    <a href="#products" class="btn btn-primary">Наша продукция</a>
+                    <a href="#contacts" class="btn btn-secondary">Связаться с нами</a>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">15+</div>
+                        <div class="stat-label">Лет опыта</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">2</div>
+                        <div class="stat-label">Направления</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">100%</div>
+                        <div class="stat-label">Качество</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave">
+            <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
+                <path d="M0,60 C300,100 600,20 900,60 C1050,80 1150,40 1200,60 L1200,120 L0,120 Z" fill="currentColor"></path>
+            </svg>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <h2 class="section-title">О компании</h2>
+            <div class="about-content">
+                <div class="about-text">
+                    <p class="about-description">
+                        Компания "КавказТорг 07" специализируется на производстве высококачественных деревянных поддонов 
+                        и газированных напитков. Мы гордимся тем, что предлагаем нашим клиентам продукцию, 
+                        изготовленную с соблюдением всех стандартов качества и экологических норм.
+                    </p>
+                    <p class="about-description">
+                        Наша компания работает на рынке, обеспечивая надежные решения для логистики и 
+                        качественные напитки для потребителей. Мы стремимся к постоянному совершенствованию 
+                        наших производственных процессов и расширению ассортимента продукции.
+                    </p>
+                </div>
+                <div class="about-features">
+                    <div class="feature-card feature-card-1">
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon">📦</div>
+                            <div class="feature-icon-bg"></div>
+                        </div>
+                        <h3 class="feature-title">Деревянные поддоны</h3>
+                        <p class="feature-text">Прочные и надежные поддоны для вашего бизнеса</p>
+                        <div class="feature-decoration"></div>
+                    </div>
+                    <div class="feature-card feature-card-2">
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon">🥤</div>
+                            <div class="feature-icon-bg"></div>
+                        </div>
+                        <h3 class="feature-title">Газированные напитки</h3>
+                        <p class="feature-text">Освежающие напитки высокого качества</p>
+                        <div class="feature-decoration"></div>
+                    </div>
+                    <div class="feature-card feature-card-3">
+                        <div class="feature-icon-wrapper">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-icon-bg"></div>
+                        </div>
+                        <h3 class="feature-title">Качество</h3>
+                        <p class="feature-text">Соблюдение всех стандартов производства</p>
+                        <div class="feature-decoration"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <h2 class="section-title">Наша продукция</h2>
+            <div class="products-grid" id="productsGrid">
+                <!-- Каталог будет загружен позже -->
+                <div class="product-category product-category-1">
+                    <div class="product-icon">📦</div>
+                    <div class="product-badge">Новинка</div>
+                    <h3 class="category-title">Деревянные поддоны</h3>
+                    <p class="category-description">Каталог поддонов будет добавлен в ближайшее время</p>
+                    <div class="product-decoration"></div>
+                </div>
+                <div class="product-category product-category-2">
+                    <div class="product-icon">🥤</div>
+                    <div class="product-badge">Популярное</div>
+                    <h3 class="category-title">Газированные напитки</h3>
+                    <p class="category-description">Каталог напитков будет добавлен в ближайшее время</p>
+                    <div class="product-decoration"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contacts Section -->
+    <section id="contacts" class="contacts">
+        <div class="container">
+            <h2 class="section-title">Контакты</h2>
+            <div class="contacts-content">
+                <div class="contact-card contact-card-1">
+                    <div class="contact-icon-wrapper">
+                        <div class="contact-icon">📞</div>
+                        <div class="contact-icon-ring"></div>
+                    </div>
+                    <h3 class="contact-title">Телефон</h3>
+                    <a href="tel:+79287045333" class="contact-link">+7 (928) 704-53-33</a>
+                    <div class="contact-decoration"></div>
+                </div>
+                <div class="contact-card contact-card-2">
+                    <div class="contact-icon-wrapper">
+                        <div class="contact-icon">📍</div>
+                        <div class="contact-icon-ring"></div>
+                    </div>
+                    <h3 class="contact-title">Юридический адрес</h3>
+                    <p class="contact-text">
+                        361202, Кабардино-Балкарская республика,<br>
+                        м.р-н Терский, г.п. Терек,<br>
+                        ул. Лермонтова, д. 44
+                    </p>
+                    <div class="contact-decoration"></div>
+                </div>
+                <div class="contact-card contact-card-3">
+                    <div class="contact-icon-wrapper">
+                        <div class="contact-icon">🏢</div>
+                        <div class="contact-icon-ring"></div>
+                    </div>
+                    <h3 class="contact-title">Фактический адрес</h3>
+                    <p class="contact-text">
+                        г. Нальчик,<br>
+                        ул. Мальбахова, 32
+                    </p>
+                    <div class="contact-decoration"></div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <p class="footer-text">&copy; 2024 КавказТорг 07. Все права защищены.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
