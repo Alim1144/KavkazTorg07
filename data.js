@@ -88,7 +88,12 @@ class ProductManager {
         if (products[category]) {
             const index = products[category].findIndex(p => p.id === productId);
             if (index !== -1) {
-                products[category][index] = { ...products[category][index], ...updatedProduct };
+                // Сохраняем ID и обновляем остальные поля
+                products[category][index] = { 
+                    ...products[category][index], 
+                    ...updatedProduct,
+                    id: productId // Явно сохраняем ID
+                };
                 this.saveProducts(products);
                 return true;
             }

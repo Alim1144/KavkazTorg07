@@ -110,8 +110,12 @@ function createProductCard(product, category) {
     
     let imageHtml = '';
     let iconHtml = '';
-    if (product.image) {
-        imageHtml = `<img src="${product.image}" alt="${product.name}" class="product-image" onerror="this.style.display='none';">`;
+    if (product.image && product.image.trim()) {
+        imageHtml = `<img src="${product.image}" alt="${product.name}" class="product-image" 
+            onerror="this.onerror=null; this.style.display='none'; const icon = this.parentElement.querySelector('.product-icon-fallback'); if(icon) icon.style.display='block';"
+            loading="lazy">`;
+        // Резервная иконка, которая показывается при ошибке загрузки изображения
+        iconHtml = `<div class="product-icon product-icon-fallback" style="display:none;">${product.icon || '📦'}</div>`;
     } else {
         iconHtml = `<div class="product-icon">${product.icon || '📦'}</div>`;
     }

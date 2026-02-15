@@ -78,6 +78,12 @@
             border-color: var(--primary-green);
         }
 
+        .form-group select:disabled {
+            background: #f5f5f5;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
         .form-group textarea {
             resize: vertical;
             min-height: 100px;
@@ -156,15 +162,117 @@
         }
 
         .image-preview {
-            max-width: 150px;
-            max-height: 150px;
+            max-width: 200px;
+            max-height: 200px;
             margin-top: 0.5rem;
             border-radius: 8px;
             display: none;
+            border: 2px solid #e0e0e0;
+            padding: 5px;
+            background: var(--bg-light);
         }
 
         .image-preview.show {
             display: block;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+        }
+
+        .file-input-wrapper input[type="file"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            transition: border-color 0.3s ease;
+            background: white;
+        }
+
+        .file-input-wrapper input[type="file"]:hover {
+            border-color: var(--primary-green);
+        }
+
+        .file-input-wrapper input[type="file"]:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .file-input-info {
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            color: var(--text-light);
+        }
+
+        .remove-image-btn {
+            margin-top: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .remove-image-btn.show {
+            display: inline-block;
+        }
+
+        .remove-image-btn:hover {
+            background: #c82333;
+        }
+
+        .loading-indicator {
+            display: none;
+            margin-top: 0.5rem;
+            color: var(--primary-green);
+            font-size: 0.9rem;
+        }
+
+        .loading-indicator.show {
+            display: block;
+        }
+
+        .error-message {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: none;
+        }
+
+        .error-message.show {
+            display: block;
+        }
+
+        .edit-mode {
+            background: #fff3cd;
+            border: 2px solid #ffc107;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .form-actions .btn-admin {
+            flex: 1;
+        }
+
+        .btn-cancel {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+        }
+
+        .btn-cancel:hover {
+            background: linear-gradient(135deg, #5a6268, #495057);
         }
 
         .success-message {
@@ -208,9 +316,15 @@
             Товар успешно добавлен!
         </div>
 
-        <div class="admin-section">
-            <h2>Добавить товар</h2>
+        <div class="error-message" id="errorMessage">
+            <span id="errorText"></span>
+        </div>
+
+        <div class="admin-section" id="productFormSection">
+            <h2 id="formTitle">Добавить товар</h2>
             <form id="productForm">
+                <input type="hidden" id="editingProductId" value="">
+                <input type="hidden" id="editingCategory" value="">
                 <div class="form-group">
                     <label for="productCategory">Категория *</label>
                     <select id="productCategory" required>
@@ -263,12 +377,20 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="productImage">URL изображения</label>
-                    <input type="url" id="productImage" placeholder="https://example.com/image.jpg">
+                    <label for="productImage">Изображение товара</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="productImage" accept="image/*" />
+                        <div class="file-input-info">Выберите изображение (JPG, PNG, GIF, WebP). Максимальный размер: 5 МБ</div>
+                        <div class="loading-indicator" id="imageLoading">Загрузка изображения...</div>
+                    </div>
                     <img id="imagePreview" class="image-preview" alt="Превью">
+                    <button type="button" class="remove-image-btn" id="removeImageBtn">Удалить изображение</button>
                 </div>
 
-                <button type="submit" class="btn-admin">Добавить товар</button>
+                <div class="form-actions">
+                    <button type="submit" class="btn-admin" id="submitBtn">Добавить товар</button>
+                    <button type="button" class="btn-admin btn-cancel" id="cancelBtn" style="display: none;">Отмена</button>
+                </div>
             </form>
         </div>
 
@@ -285,51 +407,290 @@
 
     <script>
         const productForm = document.getElementById('productForm');
+        const productFormSection = document.getElementById('productFormSection');
+        const formTitle = document.getElementById('formTitle');
+        const submitBtn = document.getElementById('submitBtn');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const editingProductId = document.getElementById('editingProductId');
+        const editingCategory = document.getElementById('editingCategory');
         const successMessage = document.getElementById('successMessage');
+        const errorMessage = document.getElementById('errorMessage');
+        const errorText = document.getElementById('errorText');
         const imagePreview = document.getElementById('imagePreview');
         const productImageInput = document.getElementById('productImage');
+        const removeImageBtn = document.getElementById('removeImageBtn');
+        const imageLoading = document.getElementById('imageLoading');
+        let selectedImageBase64 = null;
+        let isEditMode = false;
 
-        // Превью изображения
-        productImageInput.addEventListener('input', function() {
-            if (this.value) {
-                imagePreview.src = this.value;
-                imagePreview.classList.add('show');
+        function showError(message) {
+            errorText.textContent = message;
+            errorMessage.classList.add('show');
+            setTimeout(() => {
+                errorMessage.classList.remove('show');
+            }, 5000);
+        }
+
+        function hideError() {
+            errorMessage.classList.remove('show');
+        }
+
+        // Функция для оптимизации и конвертации изображения в base64
+        function convertFileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                // Проверка типа файла
+                if (!file.type.startsWith('image/')) {
+                    reject(new Error('Выберите файл изображения'));
+                    return;
+                }
+
+                // Проверка размера файла (максимум 10 МБ до оптимизации)
+                if (file.size > 10 * 1024 * 1024) {
+                    reject(new Error('Файл слишком большой. Максимальный размер: 10 МБ'));
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const img = new Image();
+                    img.onload = function() {
+                        // Создаем canvas для оптимизации
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        
+                        // Ограничиваем максимальный размер (1920px по большей стороне)
+                        const maxDimension = 1920;
+                        if (width > maxDimension || height > maxDimension) {
+                            if (width > height) {
+                                height = (height / width) * maxDimension;
+                                width = maxDimension;
+                            } else {
+                                width = (width / height) * maxDimension;
+                                height = maxDimension;
+                            }
+                        }
+                        
+                        canvas.width = width;
+                        canvas.height = height;
+                        
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, width, height);
+                        
+                        // Конвертируем в base64 с качеством 0.85 (хороший баланс между качеством и размером)
+                        const optimizedBase64 = canvas.toDataURL('image/jpeg', 0.85);
+                        
+                        // Проверяем размер после оптимизации (максимум 2 МБ для base64)
+                        if (optimizedBase64.length > 2 * 1024 * 1024) {
+                            // Пробуем с меньшим качеством
+                            const optimizedBase642 = canvas.toDataURL('image/jpeg', 0.7);
+                            if (optimizedBase642.length > 2 * 1024 * 1024) {
+                                reject(new Error('Изображение слишком большое даже после оптимизации. Попробуйте другое изображение.'));
+                                return;
+                            }
+                            resolve(optimizedBase642);
+                        } else {
+                            resolve(optimizedBase64);
+                        }
+                    };
+                    img.onerror = function() {
+                        reject(new Error('Ошибка при загрузке изображения'));
+                    };
+                    img.src = e.target.result;
+                };
+                reader.onerror = function() {
+                    reject(new Error('Ошибка при чтении файла'));
+                };
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // Обработка выбора файла
+        productImageInput.addEventListener('change', async function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                imageLoading.classList.add('show');
+                hideError();
+                
+                try {
+                    selectedImageBase64 = await convertFileToBase64(file);
+                    imagePreview.src = selectedImageBase64;
+                    imagePreview.classList.add('show');
+                    removeImageBtn.classList.add('show');
+                    imageLoading.classList.remove('show');
+                } catch (error) {
+                    showError(error.message);
+                    this.value = '';
+                    selectedImageBase64 = null;
+                    imagePreview.classList.remove('show');
+                    removeImageBtn.classList.remove('show');
+                    imageLoading.classList.remove('show');
+                }
             } else {
+                selectedImageBase64 = null;
                 imagePreview.classList.remove('show');
+                removeImageBtn.classList.remove('show');
+                imageLoading.classList.remove('show');
             }
         });
 
+        // Удаление изображения
+        removeImageBtn.addEventListener('click', function() {
+            productImageInput.value = '';
+            selectedImageBase64 = null;
+            productImageInput.dataset.currentImage = '';
+            imagePreview.classList.remove('show');
+            removeImageBtn.classList.remove('show');
+        });
+
         // Обработка формы
-        productForm.addEventListener('submit', function(e) {
+        productForm.addEventListener('submit', async function(e) {
             e.preventDefault();
 
+            hideError();
+            
+            // Проверка обязательных полей
+            const category = document.getElementById('productCategory').value;
+            if (!category) {
+                showError('Выберите категорию товара');
+                return;
+            }
+
+            const productName = document.getElementById('productName').value;
+            if (!productName.trim()) {
+                showError('Введите название товара');
+                return;
+            }
+
+            const productPrice = document.getElementById('productPrice').value;
+            if (!productPrice || parseFloat(productPrice) <= 0) {
+                showError('Введите корректную цену');
+                return;
+            }
+
+            // Определяем изображение: если выбрано новое - используем его, иначе оставляем текущее
+            let productImage = '';
+            if (selectedImageBase64 !== null) {
+                // Новое изображение выбрано
+                productImage = selectedImageBase64;
+            } else if (isEditMode) {
+                // Режим редактирования, но новое изображение не выбрано - сохраняем текущее
+                const currentImage = productImageInput.dataset.currentImage || '';
+                productImage = currentImage;
+            }
+
             const product = {
-                name: document.getElementById('productName').value,
+                name: productName,
                 size: document.getElementById('productSize').value,
-                price: parseFloat(document.getElementById('productPrice').value),
+                price: parseFloat(productPrice),
                 priceNote: document.getElementById('productPriceNote').value,
                 description: document.getElementById('productDescription').value,
                 badge: document.getElementById('productBadge').value,
                 icon: document.getElementById('productIcon').value || '📦',
-                image: document.getElementById('productImage').value
+                image: productImage
             };
 
-            const category = document.getElementById('productCategory').value;
+            let success = false;
+            if (isEditMode && editingProductId.value) {
+                // Режим редактирования
+                success = productManager.updateProduct(editingCategory.value, parseInt(editingProductId.value), product);
+                if (success) {
+                    showSuccess('Товар успешно обновлен!');
+                    exitEditMode();
+                }
+            } else {
+                // Режим добавления
+                success = productManager.addProduct(category, product);
+                if (success) {
+                    showSuccess('Товар успешно добавлен!');
+                    resetForm();
+                }
+            }
 
-            if (productManager.addProduct(category, product)) {
-                showSuccess();
-                productForm.reset();
-                imagePreview.classList.remove('show');
+            if (success) {
                 loadProducts();
+                
+                // Обновляем главную страницу, если она открыта
+                if (window.opener && !window.opener.closed) {
+                    window.opener.location.reload();
+                }
             }
         });
 
-        function showSuccess() {
+        function showSuccess(message = 'Товар успешно добавлен!') {
+            successMessage.textContent = message;
             successMessage.classList.add('show');
             setTimeout(() => {
                 successMessage.classList.remove('show');
             }, 3000);
         }
+
+        function resetForm() {
+            productForm.reset();
+            selectedImageBase64 = null;
+            imagePreview.classList.remove('show');
+            removeImageBtn.classList.remove('show');
+            productImageInput.dataset.currentImage = '';
+            exitEditMode();
+        }
+
+        function exitEditMode() {
+            isEditMode = false;
+            editingProductId.value = '';
+            editingCategory.value = '';
+            formTitle.textContent = 'Добавить товар';
+            submitBtn.textContent = 'Добавить товар';
+            cancelBtn.style.display = 'none';
+            productFormSection.classList.remove('edit-mode');
+            document.getElementById('productCategory').disabled = false; // Разблокируем категорию
+            resetForm();
+        }
+
+        function enterEditMode(product, category) {
+            isEditMode = true;
+            editingProductId.value = product.id;
+            editingCategory.value = category;
+            
+            // Заполняем форму данными товара
+            const categorySelect = document.getElementById('productCategory');
+            categorySelect.value = category;
+            categorySelect.disabled = true; // Блокируем изменение категории
+            document.getElementById('productName').value = product.name || '';
+            document.getElementById('productSize').value = product.size || '';
+            document.getElementById('productPrice').value = product.price || '';
+            document.getElementById('productPriceNote').value = product.priceNote || '';
+            document.getElementById('productDescription').value = product.description || '';
+            document.getElementById('productBadge').value = product.badge || '';
+            document.getElementById('productIcon').value = product.icon || '📦';
+            
+            // Загружаем изображение
+            if (product.image) {
+                selectedImageBase64 = product.image;
+                imagePreview.src = product.image;
+                imagePreview.classList.add('show');
+                removeImageBtn.classList.add('show');
+                productImageInput.dataset.currentImage = product.image;
+            } else {
+                selectedImageBase64 = null;
+                imagePreview.classList.remove('show');
+                removeImageBtn.classList.remove('show');
+                productImageInput.dataset.currentImage = '';
+            }
+            
+            // Обновляем интерфейс
+            formTitle.textContent = 'Редактировать товар';
+            submitBtn.textContent = 'Сохранить изменения';
+            cancelBtn.style.display = 'block';
+            productFormSection.classList.add('edit-mode');
+            
+            // Прокручиваем к форме
+            productFormSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        // Обработчик кнопки отмены
+        cancelBtn.addEventListener('click', function() {
+            exitEditMode();
+        });
 
         function loadProducts() {
             const products = productManager.getProducts();
@@ -361,19 +722,37 @@
             const item = document.createElement('div');
             item.className = 'product-item-admin';
             
+            const imageHtml = product.image ? 
+                `<img src="${product.image}" alt="${product.name}" style="max-width: 100px; max-height: 100px; border-radius: 8px; margin-right: 1rem; object-fit: contain;">` : 
+                '';
+            
             item.innerHTML = `
-                <div class="product-item-admin-info">
-                    <h3>${product.name}</h3>
-                    ${product.size ? `<p><strong>Размер:</strong> ${product.size}</p>` : ''}
-                    <p><strong>Цена:</strong> ${product.price} ₽ ${product.priceNote ? `(${product.priceNote})` : ''}</p>
-                    ${product.description ? `<p>${product.description}</p>` : ''}
+                <div style="display: flex; align-items: center; flex: 1;">
+                    ${imageHtml}
+                    <div class="product-item-admin-info">
+                        <h3>${product.name}</h3>
+                        ${product.size ? `<p><strong>Размер:</strong> ${product.size}</p>` : ''}
+                        <p><strong>Цена:</strong> ${product.price} ₽ ${product.priceNote ? `(${product.priceNote})` : ''}</p>
+                        ${product.description ? `<p>${product.description}</p>` : ''}
+                    </div>
                 </div>
                 <div class="product-item-admin-actions">
+                    <button class="btn-admin btn-admin-secondary btn-small" onclick="editProduct('${category}', ${product.id})">Редактировать</button>
                     <button class="btn-admin btn-admin-danger btn-small" onclick="deleteProduct('${category}', ${product.id})">Удалить</button>
                 </div>
             `;
 
             return item;
+        }
+
+        function editProduct(category, productId) {
+            const products = productManager.getProducts();
+            if (products[category]) {
+                const product = products[category].find(p => p.id === productId);
+                if (product) {
+                    enterEditMode(product, category);
+                }
+            }
         }
 
         function deleteProduct(category, productId) {
