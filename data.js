@@ -28,48 +28,59 @@ class ProductManager {
                 pallets: [
                     {
                         id: 1,
-                        name: 'Европаллет (европейский)',
-                        size: '1200×800 мм',
+                        name: 'Европаллет',
+                        size: '1200х800 мм',
                         price: 500,
                         priceNote: 'с учетом НДС',
                         badge: 'Популярное',
                         icon: '📦',
-                        description: 'Стандартный европейский поддон высокого качества',
+                        description: 'Европейский деревянный поддон стандартного размера',
                         image: ''
                     }
                 ],
                 drinks: [
                     {
                         id: 1,
-                        name: 'Coca-Cola',
-                        size: '0.5 л',
-                        price: 80,
-                        priceNote: 'за бутылку',
+                        name: 'Вишневый лимонад',
+                        size: '',
+                        price: 50,
+                        priceNote: 'с учетом НДС',
                         badge: 'Популярное',
                         icon: '🥤',
-                        description: 'Классический газированный напиток',
+                        description: 'Газированный напиток со вкусом вишни',
                         image: ''
                     },
                     {
                         id: 2,
-                        name: 'Sprite',
-                        size: '0.5 л',
-                        price: 75,
-                        priceNote: 'за бутылку',
+                        name: 'Минеральная вода',
+                        size: '',
+                        price: 40,
+                        priceNote: 'с учетом НДС',
                         badge: 'Популярное',
                         icon: '🥤',
-                        description: 'Освежающий лимонно-лаймовый напиток',
+                        description: 'Освежающая минеральная вода',
                         image: ''
                     },
                     {
                         id: 3,
-                        name: 'Fanta',
-                        size: '0.5 л',
-                        price: 75,
-                        priceNote: 'за бутылку',
+                        name: 'Апельсиновый лимонад',
+                        size: '',
+                        price: 50,
+                        priceNote: 'с учетом НДС',
                         badge: 'Новинка',
                         icon: '🥤',
-                        description: 'Апельсиновый газированный напиток',
+                        description: 'Газированный напиток со вкусом апельсина',
+                        image: ''
+                    },
+                    {
+                        id: 4,
+                        name: 'Яблочный лимонад',
+                        size: '',
+                        price: 50,
+                        priceNote: 'с учетом НДС',
+                        badge: '',
+                        icon: '🥤',
+                        description: 'Газированный напиток со вкусом яблока',
                         image: ''
                     }
                 ]
