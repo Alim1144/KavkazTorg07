@@ -65,6 +65,34 @@ const observer = new IntersectionObserver((entries) => {
     });
 }, observerOptions);
 
+const SECTION_LABELS = {
+    pallet: 'Поддоны',
+    'drink-15': 'Напитки 1,5 л',
+    'drink-glass': 'Напитки в стекле',
+    'drink-water': 'Минеральная вода',
+    'drink-other': 'Напитки'
+};
+
+let currentFilter = 'all';
+
+function inferSection(product, categoryKey) {
+    if (categoryKey === 'pallets') return 'pallet';
+    if (product.section && SECTION_LABELS[product.section]) return product.section;
+
+    const txt = `${product.name || ''} ${product.description || ''}`.toLowerCase();
+    const size = String(product.size || '').toLowerCase();
+    if (txt.includes('минераль')) return 'drink-water';
+    if (txt.includes('стекло') || size.includes('стекл')) return 'drink-glass';
+    if (size.includes('1,5') || size.includes('1.5')) return 'drink-15';
+    return 'drink-other';
+}
+
+function shouldShowProduct(section) {
+    if (currentFilter === 'all') return true;
+    if (currentFilter === 'pallet') return section === 'pallet';
+    return section === currentFilter;
+}
+
 // Загрузка и отображение товаров
 function loadProducts() {
     const productsGrid = document.getElementById('productsGrid');
@@ -74,21 +102,30 @@ function loadProducts() {
     if (!products) return;
 
     productsGrid.innerHTML = '';
+    const all = [];
 
-    // Загружаем поддоны
     if (products.pallets && products.pallets.length > 0) {
         products.pallets.forEach(product => {
-            const productCard = createProductCard(product, 'pallets');
-            productsGrid.appendChild(productCard);
+            all.push({ product, category: 'pallets' });
         });
     }
 
-    // Загружаем напитки
     if (products.drinks && products.drinks.length > 0) {
         products.drinks.forEach(product => {
-            const productCard = createProductCard(product, 'drinks');
+            all.push({ product, category: 'drinks' });
+        });
+    }
+
+    all
+        .filter(({ product, category }) => shouldShowProduct(inferSection(product, category)))
+        .sort((a, b) => (a.product.name || '').localeCompare((b.product.name || ''), 'ru'))
+        .forEach(({ product, category }) => {
+            const productCard = createProductCard(product, category);
             productsGrid.appendChild(productCard);
         });
+
+    if (!productsGrid.children.length) {
+        productsGrid.innerHTML = '<div class="product-item product-category-2"><h3 class="product-title">Нет товаров</h3><p class="product-description">В выбранном разделе пока нет позиций.</p></div>';
     }
 
     // Анимация появления
@@ -107,6 +144,7 @@ function loadProducts() {
 function createProductCard(product, category) {
     const card = document.createElement('div');
     card.className = `product-item ${category === 'pallets' ? 'product-category-1' : 'product-category-2'}`;
+    const section = inferSection(product, category);
     
     let imageHtml = '';
     let iconHtml = '';
@@ -130,6 +168,7 @@ function createProductCard(product, category) {
     card.innerHTML = `
         ${imageHtml}
         ${iconHtml}
+        <div class="product-subcategory">${SECTION_LABELS[section] || SECTION_LABELS['drink-other']}</div>
         ${product.badge ? `<div class="product-badge">${product.badge}</div>` : ''}
         <h3 class="product-title">${product.name}</h3>
         ${product.description ? `<p class="product-description">${product.description}</p>` : ''}
@@ -158,6 +197,16 @@ window.addEventListener('storage', (e) => {
 
 // Observe all cards and sections with staggered animation
 document.addEventListener('DOMContentLoaded', () => {
+    const filterButtons = document.querySelectorAll('.products-filter-btn');
+    filterButtons.forEach((btn) => {
+        btn.addEventListener('click', () => {
+            filterButtons.forEach((b) => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter || 'all';
+            loadProducts();
+        });
+    });
+
     // Загружаем товары
     loadProducts();
 
